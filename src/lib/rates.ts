@@ -1,16 +1,17 @@
-import db from './db';
+import getDb from './db';
 import type { Rate, RatesMap, RateUpdate } from '@/types/rates';
 
 export function getAllRates(): Rate[] {
-  return db.prepare('SELECT * FROM rates ORDER BY category, id').all() as Rate[];
+  return getDb().prepare('SELECT * FROM rates ORDER BY category, id').all() as Rate[];
 }
 
 export function getRatesMap(): RatesMap {
-  const rows = db.prepare('SELECT id, rate FROM rates').all() as { id: string; rate: number }[];
+  const rows = getDb().prepare('SELECT id, rate FROM rates').all() as { id: string; rate: number }[];
   return Object.fromEntries(rows.map((r) => [r.id, r.rate]));
 }
 
 export function updateRates(changes: RateUpdate[]): number {
+  const db = getDb();
   const stmt = db.prepare('UPDATE rates SET rate = ?, updated_at = ? WHERE id = ?');
   const now = new Date().toISOString();
   const run = db.transaction((updates: RateUpdate[]) => {
@@ -25,6 +26,6 @@ export function updateRates(changes: RateUpdate[]): number {
 }
 
 export function rateExists(id: string): boolean {
-  const row = db.prepare('SELECT 1 FROM rates WHERE id = ?').get(id);
+  const row = getDb().prepare('SELECT 1 FROM rates WHERE id = ?').get(id);
   return !!row;
 }

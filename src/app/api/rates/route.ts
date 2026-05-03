@@ -3,6 +3,8 @@ import { getAllRates, updateRates, rateExists } from '@/lib/rates';
 import { verifySession } from '@/lib/auth';
 import type { RateUpdate } from '@/types/rates';
 
+export const dynamic = 'force-dynamic';
+
 async function checkAuth() {
   const valid = await verifySession();
   if (!valid) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

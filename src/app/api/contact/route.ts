@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import db from '@/lib/db';
+import getDb from '@/lib/db';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +16,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
     }
 
-    db.prepare(`
+    getDb().prepare(`
       INSERT INTO leads (name, email, phone, message, contact_pref, created_at)
       VALUES (?, ?, ?, ?, ?, ?)
     `).run(
